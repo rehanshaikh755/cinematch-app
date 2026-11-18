@@ -1,17 +1,11 @@
-import os, zipfile, urllib.request
 import numpy as np, pandas as pd, streamlit as st
 from sklearn.decomposition import TruncatedSVD
 
 st.title("CineMatch: Movie Recommender")
-URL = "https://files.grouplens.org/datasets/movielens/ml-latest-small.zip"
 
 @st.cache_data
 def load():
-    if not os.path.exists("ml-latest-small"):
-        urllib.request.urlretrieve(URL, "ml.zip")
-        zipfile.ZipFile("ml.zip").extractall(".")
-    return (pd.read_csv("ml-latest-small/ratings.csv"),
-            pd.read_csv("ml-latest-small/movies.csv"))
+    return pd.read_csv("ratings.csv"), pd.read_csv("movies.csv")
 
 @st.cache_resource
 def build():
@@ -48,3 +42,4 @@ best = np.argsort(-scores)[:n]
 st.subheader("We recommend")
 for j in best:
     st.write(f"- {meta.loc[items[j], 'title']} (predicted {np.clip(scores[j], 0.5, 5):.2f})")
+    
